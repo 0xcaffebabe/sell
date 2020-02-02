@@ -2,7 +2,7 @@ package wang.ismy.sell.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import wang.ismy.sell.pojo.ProductCategory;
+import wang.ismy.sell.pojo.entity.ProductCategory;
 import wang.ismy.sell.repository.ProductCategoryRepository;
 
 import java.util.List;

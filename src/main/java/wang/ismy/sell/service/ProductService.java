@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import wang.ismy.sell.enums.ProductStatusEnum;
-import wang.ismy.sell.pojo.ProductInfo;
+import wang.ismy.sell.pojo.entity.ProductInfo;
 import wang.ismy.sell.repository.ProductInfoRepository;
 
 import java.util.List;

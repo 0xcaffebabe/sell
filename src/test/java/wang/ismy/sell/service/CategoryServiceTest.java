@@ -5,7 +5,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import wang.ismy.sell.pojo.ProductCategory;
+import wang.ismy.sell.pojo.entity.ProductCategory;
 
 import javax.transaction.Transactional;
 import java.util.List;

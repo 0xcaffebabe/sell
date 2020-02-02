@@ -7,10 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
-import wang.ismy.sell.pojo.ProductInfo;
+import wang.ismy.sell.pojo.entity.ProductInfo;
 
 import javax.transaction.Transactional;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 

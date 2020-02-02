@@ -1,4 +1,4 @@
-package wang.ismy.sell.pojo;
+package wang.ismy.sell.pojo.entity;
 
 import lombok.Data;
 

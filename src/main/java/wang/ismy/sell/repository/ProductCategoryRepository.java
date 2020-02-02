@@ -1,7 +1,7 @@
 package wang.ismy.sell.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import wang.ismy.sell.pojo.ProductCategory;
+import wang.ismy.sell.pojo.entity.ProductCategory;
 
 import java.util.List;
 
