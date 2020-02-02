@@ -5,10 +5,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
+import wang.ismy.sell.enums.OrderStatusEnum;
 import wang.ismy.sell.pojo.dto.OrderDTO;
 import wang.ismy.sell.pojo.entity.OrderDetail;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,11 +45,25 @@ public class OrderServiceTest {
     }
 
     @Test
+    public void testFind(){
+        OrderDTO dto = orderService.find("c885af2eec324b5b8570f2b0675ed967");
+        assertEquals(new BigDecimal("42.00"),dto.getOrderAmount());
+        assertEquals(2,dto.getOrderDetailList().size());
+    }
+
+    @Test
     public void findByBuyer() {
+
+        Page<OrderDTO> page = orderService.findByBuyer("123", PageRequest.of(0, 2));
+        assertEquals(1,page.getContent().size());
+        assertEquals(new BigDecimal("42.00"),page.getContent().get(0).getOrderAmount());
     }
 
     @Test
     public void cancel() {
+        String orderId = "c885af2eec324b5b8570f2b0675ed967";
+        OrderDTO order = orderService.cancel(orderId);
+        assertEquals(OrderStatusEnum.CANCELED.getCode(),(int)order.getOrderStatus());
     }
 
     @Test

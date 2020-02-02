@@ -1,9 +1,11 @@
 package wang.ismy.sell.pojo.dto;
 
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 import wang.ismy.sell.enums.OrderStatusEnum;
 import wang.ismy.sell.enums.PayStatusEnum;
 import wang.ismy.sell.pojo.entity.OrderDetail;
+import wang.ismy.sell.pojo.entity.OrderMaster;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -26,4 +28,10 @@ public class OrderDTO {
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
     private List<OrderDetail> orderDetailList;
+
+    public static OrderDTO convert(OrderMaster orderMaster){
+        OrderDTO dto = new OrderDTO();
+        BeanUtils.copyProperties(orderMaster,dto);
+        return dto;
+    }
 }

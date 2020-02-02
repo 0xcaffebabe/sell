@@ -46,7 +46,15 @@ public class ProductService {
     }
 
     public void increaseStock(List<CartDTO> cartDTOS){
-
+        for (CartDTO cartDTO : cartDTOS) {
+            Optional<ProductInfo> opt = repository.findById(cartDTO.getProductId());
+            if (opt.isEmpty()){
+                throw new SellException(ResultEnum.PRODUCT_NOT_EXIST);
+            }
+            ProductInfo product = opt.get();
+            product.setProductStock(product.getProductStock()+cartDTO.getProductQuantity());
+            repository.save(product);
+        }
     }
 
     @Transactional(rollbackOn = Exception.class)

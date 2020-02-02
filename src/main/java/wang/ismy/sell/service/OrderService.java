@@ -1,10 +1,15 @@
 package wang.ismy.sell.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import wang.ismy.sell.enums.OrderStatusEnum;
 import wang.ismy.sell.enums.ResultEnum;
 import wang.ismy.sell.exception.SellException;
 import wang.ismy.sell.pojo.dto.CartDTO;
@@ -19,6 +24,7 @@ import wang.ismy.sell.utils.KeyUtils;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -27,6 +33,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @AllArgsConstructor
+@Slf4j
 public class OrderService {
 
     private OrderDetailRepository orderDetailRepository;
@@ -41,7 +48,7 @@ public class OrderService {
         // 计算总价
         BigDecimal totalAmount = calculateAmount(orderDTO, orderId);
         OrderMaster orderMaster = new OrderMaster();
-        BeanUtils.copyProperties(orderDTO,orderMaster);
+        BeanUtils.copyProperties(orderDTO, orderMaster);
         orderMaster.setOrderId(orderId);
         orderMaster.setOrderAmount(totalAmount);
         // 写入订单数据
@@ -54,12 +61,80 @@ public class OrderService {
         return orderDTO;
     }
 
+    /**
+     * 分页查找某用户的订单
+     *
+     * @param buyerOpenid
+     * @param pageable
+     * @return
+     */
     public Page<OrderDTO> findByBuyer(String buyerOpenid, Pageable pageable) {
-        return null;
+        Page<OrderMaster> page = orderMasterRepository.findByBuyerOpenid(buyerOpenid, pageable);
+        return new PageImpl<>(
+                page.getContent()
+                        .stream().map(OrderDTO::convert)
+                        .collect(Collectors.toList()), pageable, page.getTotalElements()
+        );
     }
 
-    public OrderDTO cancel(OrderDTO orderDTO) {
-        return null;
+    /**
+     * 根据订单ID查询
+     *
+     * @param orderId
+     * @return
+     */
+    public OrderDTO find(String orderId) {
+        Optional<OrderMaster> opt = orderMasterRepository.findById(orderId);
+        if (opt.isEmpty()) {
+            throw new SellException(ResultEnum.ORDER_NOT_EXIST);
+        }
+        List<OrderDetail> orderDetailList = orderDetailRepository.findByOrderId(orderId);
+        if (CollectionUtils.isEmpty(orderDetailList)) {
+            throw new SellException(ResultEnum.ORDER_DETAIL_NOT_EXIST);
+        }
+        OrderDTO orderDTO = new OrderDTO();
+        BeanUtils.copyProperties(opt.get(), orderDTO);
+        orderDTO.setOrderDetailList(orderDetailList);
+        return orderDTO;
+    }
+
+    /**
+     * 取消订单
+     *
+     * @param orderId
+     * @return
+     */
+    @Transactional(rollbackOn = Exception.class)
+    public OrderDTO cancel(String orderId) {
+        // 判断订单状态
+        OrderDTO orderDTO = find(orderId);
+        if (orderDTO.getOrderStatus().equals(OrderStatusEnum.CANCELED.getCode())) {
+            log.error("订单无法取消,orderId={},orderStatus={}", orderDTO.getOrderId(), orderDTO.getOrderStatus());
+            throw new SellException(ResultEnum.ORDER_STATUS_ERROR);
+        }
+        OrderMaster orderMaster = new OrderMaster();
+        BeanUtils.copyProperties(orderDTO, orderMaster);
+        // 修改订单状态
+        orderMaster.setOrderStatus(OrderStatusEnum.CANCELED.getCode());
+        OrderMaster result = orderMasterRepository.save(orderMaster);
+        if (!result.getOrderStatus().equals(OrderStatusEnum.CANCELED.getCode())) {
+            log.error("取消订单 更新失败,orderMaster = {}", orderMaster);
+            throw new SellException(ResultEnum.ORDER_UPDATE_FAIL);
+        }
+        // 返还库存
+        if (StringUtils.isEmpty(orderDTO.getOrderDetailList())) {
+            log.error("取消订单 订单中无商品详情 , {}", orderMaster);
+            throw new SellException(ResultEnum.ORDER_DETAIL_EMPTY);
+        }
+        productService.increaseStock(orderDTO.getOrderDetailList().stream()
+                .map(CartDTO::convert)
+                .collect(Collectors.toList()));
+        // 如果已支付，需要退款
+        if (orderDTO.getOrderStatus().equals(OrderStatusEnum.FINISHED.getCode())) {
+            // TODO 退款功能
+        }
+        orderDTO.setOrderStatus(result.getOrderStatus());
+        return orderDTO;
     }
 
     public OrderDTO finish(OrderDTO orderDTO) {
@@ -86,7 +161,7 @@ public class OrderService {
             // 订单详情入库
             orderDetail.setDetailId(KeyUtils.generateUniqueKey());
             orderDetail.setOrderId(orderId);
-            BeanUtils.copyProperties(productInfo,orderDetail);
+            BeanUtils.copyProperties(productInfo, orderDetail);
             orderDetailRepository.save(orderDetail);
         }
         return totalAmount;
