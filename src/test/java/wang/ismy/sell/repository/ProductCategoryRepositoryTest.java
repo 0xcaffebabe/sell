@@ -9,6 +9,8 @@ import wang.ismy.sell.pojo.ProductCategory;
 
 import javax.transaction.Transactional;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 @SpringBootTest
@@ -33,5 +35,10 @@ public class ProductCategoryRepositoryTest {
 
         assertEquals(1,repository.findAll().size());
         assertEquals("沙县小吃",repository.findAll().get(0).getCategoryName());
+    }
+
+    @Test
+    public void testQueryBatch(){
+        repository.findByCategoryTypeIn(List.of(1,2));
     }
 }
