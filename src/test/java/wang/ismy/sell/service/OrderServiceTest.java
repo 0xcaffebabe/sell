@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import wang.ismy.sell.enums.OrderStatusEnum;
+import wang.ismy.sell.enums.PayStatusEnum;
 import wang.ismy.sell.pojo.dto.OrderDTO;
 import wang.ismy.sell.pojo.entity.OrderDetail;
 
@@ -68,9 +69,16 @@ public class OrderServiceTest {
 
     @Test
     public void finish() {
+        String orderId = "c885af2eec324b5b8570f2b0675ed967";
+        OrderDTO order = orderService.finish(orderId);
+        assertEquals(OrderStatusEnum.FINISHED.getCode(),(int)order.getOrderStatus());
     }
 
     @Test
     public void paid() {
+        String orderId = "c885af2eec324b5b8570f2b0675ed967";
+        OrderDTO order = orderService.paid(orderId);
+        assertEquals(OrderStatusEnum.FINISHED.getCode(),(int)order.getOrderStatus());
+        assertEquals(PayStatusEnum.SUCCESS.getCode(),(int)order.getPayStatus());
     }
 }

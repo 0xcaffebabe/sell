@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import wang.ismy.sell.enums.OrderStatusEnum;
+import wang.ismy.sell.enums.PayStatusEnum;
 import wang.ismy.sell.enums.ResultEnum;
 import wang.ismy.sell.exception.SellException;
 import wang.ismy.sell.pojo.dto.CartDTO;
@@ -137,12 +138,53 @@ public class OrderService {
         return orderDTO;
     }
 
-    public OrderDTO finish(OrderDTO orderDTO) {
-        return null;
+    @Transactional(rollbackOn = Exception.class)
+    public OrderDTO finish(String orderId) {
+        // 判断状态
+        OrderDTO orderDTO = find(orderId);
+        if (!orderDTO.getOrderStatus().equals(OrderStatusEnum.NEW.getCode())){
+            log.error("完成订单 订单状态不正确 ,{}",orderDTO);
+            throw new SellException(ResultEnum.ORDER_STATUS_ERROR);
+        }
+        // 修改状态
+        orderDTO.setOrderStatus(OrderStatusEnum.FINISHED.getCode());
+        OrderMaster orderMaster = new OrderMaster();
+        BeanUtils.copyProperties(orderDTO,orderMaster);
+
+        OrderMaster result = orderMasterRepository.save(orderMaster);
+        if (!result.getOrderStatus().equals(OrderStatusEnum.FINISHED.getCode())){
+            log.error("完结订单 更新订单失败 {}",orderMaster);
+        }
+        orderDTO.setOrderStatus(result.getOrderStatus());
+        return orderDTO;
     }
 
-    public OrderDTO paid(OrderDTO orderDTO) {
-        return null;
+    @Transactional(rollbackOn = Exception.class)
+    public OrderDTO paid(String orderId) {
+        // 判断订单状态
+        OrderDTO orderDTO = find(orderId);
+        if (!orderDTO.getOrderStatus().equals(OrderStatusEnum.NEW.getCode())){
+            log.error("支付订单 订单状态不正确 ,{}",orderDTO);
+            throw new SellException(ResultEnum.ORDER_STATUS_ERROR);
+        }
+        // 判断支付状态
+        if (!orderDTO.getPayStatus().equals(PayStatusEnum.WAIT.getCode())){
+            log.error("支付订单 支付状态不正确 {}",orderDTO);
+            throw new SellException(ResultEnum.ORDER_PAY_STATUS_ERROR);
+        }
+        // 修改订单状态和支付状态
+        orderDTO.setOrderStatus(OrderStatusEnum.FINISHED.getCode());
+        orderDTO.setPayStatus(PayStatusEnum.SUCCESS.getCode());
+        OrderMaster orderMaster = new OrderMaster();
+        BeanUtils.copyProperties(orderDTO,orderMaster);
+
+        OrderMaster result = orderMasterRepository.save(orderMaster);
+        if (!result.getOrderStatus().equals(OrderStatusEnum.FINISHED.getCode())){
+            log.error("支付订单 更新订单失败 {}",orderMaster);
+        }
+        orderDTO.setOrderStatus(result.getOrderStatus());
+        orderDTO.setPayStatus(result.getPayStatus());
+        return orderDTO;
     }
 
     private BigDecimal calculateAmount(OrderDTO orderDTO, String orderId) {
