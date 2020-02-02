@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    username: root
+    password: 123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql:///sell?characterEncoding=utf-8&useSSL=false
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
