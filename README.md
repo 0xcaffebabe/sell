@@ -48,3 +48,19 @@
 
 <https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN>
 
+## 支付宝支付
+
+登录支付宝沙箱：
+
+<https://openhome.alipay.com/platform/appDaily.htm?tab=account>
+
+设置相关密钥
+
+创建订单
+
+暴露接口给支付宝调用
+
+- 验证金额、状态等
+- 根据传递过来的交易号找到订单，设置支付状态
+
+返回success，避免支付宝多次回调
