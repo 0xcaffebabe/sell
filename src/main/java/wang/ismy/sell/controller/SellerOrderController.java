@@ -52,5 +52,38 @@ public class SellerOrderController {
         }
         return mav;
     }
+
+    @GetMapping("detail")
+    public ModelAndView detail(@RequestParam String orderId){
+        ModelAndView mav = new ModelAndView();
+        try{
+            OrderDTO orderDTO = orderService.find(orderId);
+            mav.setViewName("order/detail");
+            mav.addObject("order",orderDTO);
+        }catch (Exception e){
+            e.printStackTrace();
+            mav.setViewName("common/error");
+            mav.addObject("msg",e.getMessage());
+            mav.addObject("url","/seller/order/list");
+        }
+        return mav;
+    }
+
+    @GetMapping("finish")
+    public ModelAndView finish(@RequestParam String orderId){
+        ModelAndView mav = new ModelAndView();
+        try{
+            OrderDTO orderDTO = orderService.finish(orderId);
+            mav.setViewName("common/success");
+            mav.addObject("msg","完结订单成功");
+            mav.addObject("url","/seller/order/list");
+        }catch (Exception e){
+            e.printStackTrace();
+            mav.setViewName("common/error");
+            mav.addObject("msg",e.getMessage());
+            mav.addObject("url","/seller/order/list");
+        }
+        return mav;
+    }
 }
 

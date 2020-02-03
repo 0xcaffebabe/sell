@@ -59,8 +59,8 @@
 
                         <td><a class="btn btn-primary btn-xs" href="/seller/order/detail?orderId=${item.orderId}">详情</a></td>
                         <td>
-                            <#if item.getOrderStatusEnum().msg !="取消">
-                                <a class="btn btn-primary btn-xs" href="/seller/order/cancel?orderId=${item.orderId}">取消</a>
+                            <#if item.getOrderStatusEnum().msg =="新订单">
+                                <a class="btn btn-danger btn-xs" href="/seller/order/cancel?orderId=${item.orderId}">取消</a>
                             </#if>
                         </td>
                     </tr>
