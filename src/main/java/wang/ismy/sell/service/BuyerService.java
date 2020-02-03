@@ -26,8 +26,9 @@ public class BuyerService {
 
     public void cancelOrder(String openid, String orderId) {
         OrderDTO result = orderService.find(orderId);
-        if (result != null && result.getBuyerOpenid().equals(openid)) {
-            throw new SellException(ResultEnum.PERMISSION_DENIED);
+        if (result.getBuyerOpenid().equals(openid)) {
+            orderService.cancel(orderId);
+            return;
         }
         throw new SellException(ResultEnum.PERMISSION_DENIED);
     }

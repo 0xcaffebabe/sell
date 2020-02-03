@@ -1,5 +1,6 @@
 package wang.ismy.sell.service;
 
+import com.alipay.api.AlipayApiException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -41,6 +42,7 @@ public class OrderService {
     private OrderMasterRepository orderMasterRepository;
 
     private ProductService productService;
+    private AliPayService aliPayService;
 
     /**
      * 创建一条订单
@@ -137,7 +139,11 @@ public class OrderService {
                 .collect(Collectors.toList()));
         // 如果已支付，需要退款
         if (orderDTO.getOrderStatus().equals(OrderStatusEnum.FINISHED.getCode())) {
-            // TODO 退款功能
+            try {
+                aliPayService.cancel(orderDTO);
+            } catch (AlipayApiException e) {
+                throw new RuntimeException(e);
+            }
         }
         orderDTO.setOrderStatus(result.getOrderStatus());
         return orderDTO;

@@ -5,11 +5,14 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.alipay.api.request.AlipayTradePrecreateRequest;
+import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
+import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import wang.ismy.sell.pojo.dto.OrderDTO;
 import wang.ismy.sell.utils.KeyUtils;
 
 import javax.annotation.PostConstruct;
@@ -78,6 +81,20 @@ public class AliPayService {
             e.printStackTrace();
         }
         return form;
+    }
+
+    public boolean cancel(OrderDTO orderDTO) throws AlipayApiException {
+        AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
+        request.setBizContent("{" +
+                "\"out_trade_no\":\""+orderDTO.getOrderId()+"\"," +
+                "\"refund_amount\":"+orderDTO.getOrderAmount()+
+                "  }");
+        AlipayTradeRefundResponse response = client.execute(request);
+        if(response.isSuccess()){
+            return true;
+        }
+        return false;
+
     }
 
     public boolean validOrder(String tradeNo, String key) {
