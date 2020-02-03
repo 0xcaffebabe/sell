@@ -42,8 +42,13 @@ public class OrderService {
 
     private ProductService productService;
 
+    /**
+     * 创建一条订单
+     * @param orderDTO
+     * @return 订单号
+     */
     @Transactional(rollbackOn = Exception.class)
-    public OrderDTO create(OrderDTO orderDTO) {
+    public String create(OrderDTO orderDTO) {
 
         String orderId = KeyUtils.generateUniqueKey();
         // 计算总价
@@ -59,7 +64,7 @@ public class OrderService {
                 orderDTO.getOrderDetailList()
                         .stream().map(CartDTO::convert).collect(Collectors.toList())
         );
-        return orderDTO;
+        return orderId;
     }
 
     /**

@@ -1,11 +1,14 @@
 package wang.ismy.sell.pojo.dto;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import wang.ismy.sell.enums.OrderStatusEnum;
 import wang.ismy.sell.enums.PayStatusEnum;
 import wang.ismy.sell.pojo.entity.OrderDetail;
 import wang.ismy.sell.pojo.entity.OrderMaster;
+import wang.ismy.sell.pojo.form.OrderForm;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,9 +32,20 @@ public class OrderDTO {
     private LocalDateTime updateTime;
     private List<OrderDetail> orderDetailList;
 
-    public static OrderDTO convert(OrderMaster orderMaster){
+    public static OrderDTO convert(OrderMaster orderMaster) {
         OrderDTO dto = new OrderDTO();
-        BeanUtils.copyProperties(orderMaster,dto);
+        BeanUtils.copyProperties(orderMaster, dto);
+        return dto;
+    }
+
+    public static OrderDTO convert(OrderForm form) {
+        OrderDTO dto = new OrderDTO();
+        dto.buyerName = form.getName();
+        dto.buyerPhone = form.getPhone();
+        dto.buyerAddress = form.getAddress();
+        dto.buyerOpenid = form.getOpenid();
+        dto.orderDetailList = new Gson().fromJson(form.getItems(), new TypeToken<List<OrderDetail>>() {
+        }.getType());
         return dto;
     }
 }
