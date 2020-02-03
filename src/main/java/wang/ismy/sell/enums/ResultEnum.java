@@ -19,8 +19,8 @@ public enum ResultEnum {
     ORDER_DETAIL_EMPTY(1007, "订单中无订单详情"),
     ORDER_PAY_STATUS_ERROR(1008, "订单支付状态不正确"),
     CART_EMPTY(1009, "购物车为空"),
-    OPENID_EMPTY(1010, "openid 为空")
-    ;
+    OPENID_EMPTY(1010, "openid 为空"),
+    PERMISSION_DENIED(1011, "无权限访问");
 
     private int code;
 

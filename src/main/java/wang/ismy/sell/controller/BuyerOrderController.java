@@ -13,6 +13,7 @@ import wang.ismy.sell.exception.SellException;
 import wang.ismy.sell.pojo.dto.OrderDTO;
 import wang.ismy.sell.pojo.form.OrderForm;
 import wang.ismy.sell.pojo.vo.Result;
+import wang.ismy.sell.service.BuyerService;
 import wang.ismy.sell.service.OrderService;
 
 import javax.validation.Valid;
@@ -30,6 +31,8 @@ import java.util.Map;
 public class BuyerOrderController {
 
     private OrderService orderService;
+
+    private BuyerService buyerService;
 
     /**
      * 创建订单
@@ -84,9 +87,7 @@ public class BuyerOrderController {
             throw new SellException(ResultEnum.PARAM_ERROR);
         }
 
-        OrderDTO data = orderService.find(orderId);
-        // TODO 权限校验
-        return Result.success(data);
+        return Result.success(buyerService.findOrder(openid, orderId));
     }
 
     @PostMapping("cancel")
@@ -99,9 +100,7 @@ public class BuyerOrderController {
         if (StringUtils.isEmpty(orderId)) {
             throw new SellException(ResultEnum.PARAM_ERROR);
         }
-
-        // todo 权限校验
-        OrderDTO result = orderService.cancel(orderId);
+        buyerService.cancelOrder(openid, orderId);
         return Result.success(null);
     }
 }
