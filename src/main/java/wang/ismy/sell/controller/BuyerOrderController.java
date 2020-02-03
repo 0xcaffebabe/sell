@@ -15,7 +15,6 @@ import wang.ismy.sell.pojo.form.OrderForm;
 import wang.ismy.sell.pojo.vo.Result;
 import wang.ismy.sell.service.OrderService;
 
-import javax.print.DocFlavor;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -34,27 +33,29 @@ public class BuyerOrderController {
 
     /**
      * 创建订单
+     *
      * @return
      */
     @PostMapping("create")
-    public Result<Map<String,String>> create(@Valid OrderForm form, BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
-            log.error("表单校验出现错误 ，{}",form);
-            throw new SellException(ResultEnum.PARAM_ERROR.getCode(),bindingResult.getFieldError().getDefaultMessage());
+    public Result<Map<String, String>> create(@Valid OrderForm form, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            log.error("表单校验出现错误 ，{}", form);
+            throw new SellException(ResultEnum.PARAM_ERROR.getCode(), bindingResult.getFieldError().getDefaultMessage());
         }
 
         OrderDTO orderDTO = OrderDTO.convert(form);
 
-        if (CollectionUtils.isEmpty(orderDTO.getOrderDetailList())){
-            log.error("创建订单 购物车为空 {}",form);
+        if (CollectionUtils.isEmpty(orderDTO.getOrderDetailList())) {
+            log.error("创建订单 购物车为空 {}", form);
             throw new SellException(ResultEnum.CART_EMPTY);
         }
         String result = orderService.create(orderDTO);
-        return Result.success(Map.of("orderId",result));
+        return Result.success(Map.of("orderId", result));
     }
 
     /**
      * 根据openid分页查询
+     *
      * @param openid
      * @param page
      * @param size
@@ -63,12 +64,44 @@ public class BuyerOrderController {
     @GetMapping("list")
     public Result<List<OrderDTO>> list(@RequestParam String openid,
                                        @RequestParam(defaultValue = "0") Integer page,
-                                       @RequestParam(defaultValue = "10") Integer size){
-        if (StringUtils.isEmpty(openid)){
+                                       @RequestParam(defaultValue = "10") Integer size) {
+        if (StringUtils.isEmpty(openid)) {
             throw new SellException(ResultEnum.OPENID_EMPTY);
         }
 
         Page<OrderDTO> result = orderService.findByBuyer(openid, PageRequest.of(page, size));
         return Result.success(result.getContent());
+    }
+
+    @GetMapping("detail")
+    public Result<OrderDTO> detail(@RequestParam String openid,
+                                   @RequestParam String orderId) {
+        if (StringUtils.isEmpty(openid)) {
+            throw new SellException(ResultEnum.PARAM_ERROR);
+        }
+
+        if (StringUtils.isEmpty(orderId)) {
+            throw new SellException(ResultEnum.PARAM_ERROR);
+        }
+
+        OrderDTO data = orderService.find(orderId);
+        // TODO 权限校验
+        return Result.success(data);
+    }
+
+    @PostMapping("cancel")
+    public Result<Void> cancel(@RequestParam String openid,
+                               @RequestParam String orderId) {
+        if (StringUtils.isEmpty(openid)) {
+            throw new SellException(ResultEnum.PARAM_ERROR);
+        }
+
+        if (StringUtils.isEmpty(orderId)) {
+            throw new SellException(ResultEnum.PARAM_ERROR);
+        }
+
+        // todo 权限校验
+        OrderDTO result = orderService.cancel(orderId);
+        return Result.success(null);
     }
 }
