@@ -21,3 +21,30 @@
 #### 日志门面
 
 - slf4j
+
+## 微信登录
+
+测试号申请:
+
+<http://mp.weixin.qq.com/debug/cgi-bin/sandboxinfo?action=showinfo&t=sandbox/index>
+
+配置接口：
+
+填写外网URL,该URL必须返回微信传过来的随机字符串
+
+关注测试公众号
+
+在网页授权选项填写授权回调页面域名
+
+当进行微信登录时，跳转到:<https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect>
+
+编写一个回调controller，微信网页授权回调的地址，微信回调会传递code与state两个参数
+
+根据code、appid、secret获取access_token、openid:
+
+<https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code>
+
+根据access_token、openid 拉取用户信息
+
+<https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN>
+
