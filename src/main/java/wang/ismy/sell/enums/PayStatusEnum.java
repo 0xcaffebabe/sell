@@ -19,4 +19,19 @@ public enum PayStatusEnum {
         this.code = code;
         this.msg = msg;
     }
+
+    public static PayStatusEnum valueOf(Integer payStatus) {
+        for (PayStatusEnum value : values()) {
+            if (value.code == payStatus){
+                return value;
+            }
+        }
+        return null;
+    }
+
+
+    @Override
+    public String toString() {
+        return msg;
+    }
 }

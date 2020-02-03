@@ -21,4 +21,19 @@ public enum  OrderStatusEnum {
         this.code = code;
         this.msg = msg;
     }
+
+    public static OrderStatusEnum valueOf(Integer code){
+        for (OrderStatusEnum value : values()) {
+            if (value.code == code){
+                return value;
+            }
+        }
+        return null;
+    }
+
+
+    @Override
+    public String toString() {
+        return msg;
+    }
 }

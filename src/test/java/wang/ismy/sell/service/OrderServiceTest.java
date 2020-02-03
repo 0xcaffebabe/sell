@@ -81,4 +81,10 @@ public class OrderServiceTest {
         assertEquals(OrderStatusEnum.FINISHED.getCode(),(int)order.getOrderStatus());
         assertEquals(PayStatusEnum.SUCCESS.getCode(),(int)order.getPayStatus());
     }
+
+    @Test
+    public void findList(){
+        Page<OrderDTO> list = orderService.findList(PageRequest.of(1, 2));
+        assertEquals(2,list.getContent().size());
+    }
 }

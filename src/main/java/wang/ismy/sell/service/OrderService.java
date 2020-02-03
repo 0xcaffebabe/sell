@@ -85,6 +85,15 @@ public class OrderService {
         );
     }
 
+    public Page<OrderDTO> findList(Pageable pageable){
+        Page<OrderMaster> page = orderMasterRepository.findAll(pageable);
+        return new PageImpl<>(
+                page.getContent()
+                        .stream().map(OrderDTO::convert)
+                        .collect(Collectors.toList()), pageable, page.getTotalElements()
+        );
+    }
+
     /**
      * 根据订单ID查询
      *

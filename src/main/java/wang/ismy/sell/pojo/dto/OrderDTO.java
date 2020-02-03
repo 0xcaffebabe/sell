@@ -1,5 +1,6 @@
 package wang.ismy.sell.pojo.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.gson.Gson;
@@ -34,6 +35,16 @@ public class OrderDTO {
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
     private List<OrderDetail> orderDetailList;
+
+    @JsonIgnore
+    public OrderStatusEnum getOrderStatusEnum(){
+        return OrderStatusEnum.valueOf(orderStatus);
+    }
+
+    @JsonIgnore
+    public PayStatusEnum getPayStatusEnum(){
+        return PayStatusEnum.valueOf(payStatus);
+    }
 
     public static OrderDTO convert(OrderMaster orderMaster) {
         OrderDTO dto = new OrderDTO();
