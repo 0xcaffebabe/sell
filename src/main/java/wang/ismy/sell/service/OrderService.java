@@ -43,6 +43,7 @@ public class OrderService {
 
     private ProductService productService;
     private AliPayService aliPayService;
+    private WeChatMessageService weChatMessageService;
 
     /**
      * 创建一条订单
@@ -155,6 +156,8 @@ public class OrderService {
             }
         }
         orderDTO.setOrderStatus(result.getOrderStatus());
+        // 微信消息通知
+        weChatMessageService.orderStatusChanged(orderDTO);
         return orderDTO;
     }
 
@@ -176,6 +179,8 @@ public class OrderService {
             log.error("完结订单 更新订单失败 {}",orderMaster);
         }
         orderDTO.setOrderStatus(result.getOrderStatus());
+        // 微信消息通知
+        weChatMessageService.orderStatusChanged(orderDTO);
         return orderDTO;
     }
 

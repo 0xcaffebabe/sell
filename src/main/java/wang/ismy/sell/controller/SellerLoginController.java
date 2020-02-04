@@ -71,7 +71,7 @@ public class SellerLoginController {
             cookie.setPath("/");
             cookie.setMaxAge(7200);
             response.addCookie(cookie);
-            mav.setViewName("redirect:/seller/order/list");
+            mav.setViewName("redirect:/alipay/login");
         }
         return mav;
     }
