@@ -1,6 +1,7 @@
 package wang.ismy.sell.pojo.entity;
 
 import lombok.Data;
+import wang.ismy.sell.enums.ProductStatusEnum;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -38,4 +39,8 @@ public class ProductInfo {
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
+
+    public ProductStatusEnum getProductStatusEnum(){
+        return ProductStatusEnum.valueOf(productStatus);
+    }
 }

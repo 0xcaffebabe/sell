@@ -21,4 +21,13 @@ public enum  ProductStatusEnum {
         this.code = code;
         this.msg = msg;
     }
+
+    public static ProductStatusEnum valueOf(Integer productStatus) {
+        for (ProductStatusEnum value : values()) {
+            if (value.code == productStatus){
+                return value;
+            }
+        }
+        return null;
+    }
 }
