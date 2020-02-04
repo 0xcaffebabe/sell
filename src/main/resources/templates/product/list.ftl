@@ -20,6 +20,7 @@
         <div class="container">
             <div class="row clearfix">
                 <div class="col-md-12 column">
+                    <a href="/seller/product/index" class="btn btn-primary"> 新增商品</a>
                     <table class="table table-bordered table-condensed">
                         <thead>
                         <tr>
