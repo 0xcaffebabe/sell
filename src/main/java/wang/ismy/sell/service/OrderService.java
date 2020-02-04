@@ -14,6 +14,7 @@ import wang.ismy.sell.enums.OrderStatusEnum;
 import wang.ismy.sell.enums.PayStatusEnum;
 import wang.ismy.sell.enums.ResultEnum;
 import wang.ismy.sell.exception.SellException;
+import wang.ismy.sell.handler.WebSocket;
 import wang.ismy.sell.pojo.dto.CartDTO;
 import wang.ismy.sell.pojo.dto.OrderDTO;
 import wang.ismy.sell.pojo.entity.OrderDetail;
@@ -44,6 +45,7 @@ public class OrderService {
     private ProductService productService;
     private AliPayService aliPayService;
     private WeChatMessageService weChatMessageService;
+    private WebSocket webSocket;
 
     /**
      * 创建一条订单
@@ -67,6 +69,11 @@ public class OrderService {
                 orderDTO.getOrderDetailList()
                         .stream().map(CartDTO::convert).collect(Collectors.toList())
         );
+        // 微信消息通知
+        orderDTO = find(orderId);
+        weChatMessageService.orderStatusChanged(orderDTO);
+        // 通知卖家后台
+        webSocket.sendMessage("新订单："+orderId);
         return orderId;
     }
 

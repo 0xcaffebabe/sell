@@ -104,6 +104,22 @@
         </div>
     </div>
 </div>
-
+<script>
+    var ws = new WebSocket("ws://127.0.0.1:8080/ws");
+    ws.onopen = function(e) {
+        console.log("ws 打开",e);
+    };
+    ws.onclose = function(e) {
+        console.log("ws 关闭",e);
+    };
+    ws.onmessage = function (e) {
+        console.log("收到消息",e.data);
+        alert(e.data);
+        location.reload();
+    };
+    ws.onerror = function (e) {
+        alert("ws发生错误");
+    }
+</script>
 </body>
 </html>
