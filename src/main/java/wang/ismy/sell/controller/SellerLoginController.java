@@ -62,7 +62,7 @@ public class SellerLoginController {
     public ModelAndView logout(HttpServletRequest request,
                        HttpServletResponse response){
         ModelAndView mav = new ModelAndView();
-        String token = CookieUtils.get(request, response, "token");
+        String token = CookieUtils.get(request, "token");
         if (!StringUtils.isEmpty(token)){
             // 清除redis
             redisTemplate.delete(RedisConstant.TOKEN_PREFIX+token);

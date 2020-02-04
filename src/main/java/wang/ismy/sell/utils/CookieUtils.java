@@ -10,7 +10,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CookieUtils {
 
-    public static String get(HttpServletRequest request, HttpServletResponse response,String name){
+    public static String get(HttpServletRequest request,String name){
+        if (request.getCookies() == null){
+            return "";
+        }
         for (Cookie cookie : request.getCookies()) {
             if (cookie.getName().equals(name)) {
                 return cookie.getValue();
@@ -18,4 +21,6 @@ public class CookieUtils {
         }
         return "";
     }
+
+
 }
