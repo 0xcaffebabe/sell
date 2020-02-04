@@ -17,7 +17,7 @@
 
     <#--主要内容content-->
     <div id="page-content-wrapper">
-        <div class="container-fluid">
+        <div class="container">
             <div class="row clearfix">
                 <div class="col-md-12 column">
                     <table class="table table-bordered table-condensed">
