@@ -58,4 +58,14 @@ public class ProductServiceTest {
         product.setCategoryType(1);
         productService.save(product);
     }
+
+    @Test
+    public void testOnSale(){
+        productService.onSale("1");
+    }
+
+    @Test
+    public void testOffSale(){
+        productService.offSale("1");
+    }
 }

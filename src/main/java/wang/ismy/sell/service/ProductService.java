@@ -1,6 +1,7 @@
 package wang.ismy.sell.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.Optional;
  */
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ProductService {
 
     private ProductInfoRepository repository;
@@ -72,5 +74,43 @@ public class ProductService {
             product.setProductStock(i);
             repository.save(product);
         }
+    }
+
+    /**
+     * 商品上架
+     * @param productId
+     * @return
+     */
+    public ProductInfo onSale(String productId){
+        ProductInfo productInfo = find(productId);
+        if (productInfo == null){
+            log.error("商品不存在:{}",productId);
+            throw new SellException(ResultEnum.PRODUCT_NOT_EXIST);
+        }
+        if (productInfo.getProductStatusEnum().equals(ProductStatusEnum.UP)){
+            log.error("商品已处于上架状态 :{}",productId);
+            throw new SellException(ResultEnum.PRODUCT_STATUS_ERROR);
+        }
+        productInfo.setProductStatus(ProductStatusEnum.UP.getCode());
+        return save(productInfo);
+    }
+
+    /**
+     * 商品下架
+     * @param productId
+     * @return
+     */
+    public ProductInfo offSale(String productId){
+        ProductInfo productInfo = find(productId);
+        if (productInfo == null){
+            log.error("商品不存在:{}",productId);
+            throw new SellException(ResultEnum.PRODUCT_NOT_EXIST);
+        }
+        if (productInfo.getProductStatusEnum().equals(ProductStatusEnum.DOWN)){
+            log.error("商品已处于下架状态 :{}",productId);
+            throw new SellException(ResultEnum.PRODUCT_STATUS_ERROR);
+        }
+        productInfo.setProductStatus(ProductStatusEnum.DOWN.getCode());
+        return save(productInfo);
     }
 }

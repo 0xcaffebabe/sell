@@ -31,10 +31,48 @@ public class SellerProductController {
         Page<ProductInfo> list = productService.findAll(PageRequest.of(page, size));
 
         ModelAndView mav = new ModelAndView();
-        mav.addObject("list",list);
-        mav.addObject("currentPage",page+1);
-        mav.addObject("size",size);
+        mav.addObject("list", list);
+        mav.addObject("currentPage", page + 1);
+        mav.addObject("size", size);
         mav.setViewName("product/list");
+        return mav;
+    }
+
+    @GetMapping("on_sale")
+    public ModelAndView onSale(@RequestParam String productId) {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("common/success");
+        mav.addObject("msg", "上架成功");
+        mav.addObject("url", "/seller/product/list");
+        try {
+            if (productService.onSale(productId) == null) {
+                throw new Exception("未知错误");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            mav.setViewName("common/error");
+            mav.addObject("msg", e.getMessage());
+            mav.addObject("url", "/seller/product/list");
+        }
+        return mav;
+    }
+
+    @GetMapping("off_sale")
+    public ModelAndView offSale(@RequestParam String productId) {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("common/success");
+        mav.addObject("msg", "下架成功");
+        mav.addObject("url", "/seller/product/list");
+        try {
+            if (productService.offSale(productId) == null) {
+                throw new Exception("未知错误");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            mav.setViewName("common/error");
+            mav.addObject("msg", e.getMessage());
+            mav.addObject("url", "/seller/product/list");
+        }
         return mav;
     }
 }

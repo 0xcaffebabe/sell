@@ -20,7 +20,9 @@ public enum ResultEnum {
     ORDER_PAY_STATUS_ERROR(1008, "订单支付状态不正确"),
     CART_EMPTY(1009, "购物车为空"),
     OPENID_EMPTY(1010, "openid 为空"),
-    PERMISSION_DENIED(1011, "无权限访问");
+    PERMISSION_DENIED(1011, "无权限访问"),
+    PRODUCT_STATUS_ERROR(1012, "商品状态错误")
+    ;
 
     private int code;
 
