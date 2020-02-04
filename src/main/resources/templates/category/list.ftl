@@ -19,6 +19,7 @@
     <div id="page-content-wrapper">
         <div class="container-fluid">
             <div class="row clearfix">
+                <a href="/seller/category/index" class="btn btn-primary">新增类目</a>
                 <div class="col-md-12 column">
                     <table class="table table-bordered table-condensed">
                         <thead>
@@ -40,7 +41,7 @@
                                 <td>${category.categoryType}</td>
                                 <td>${category.createTime}</td>
                                 <td>${category.updateTime}</td>
-                                <td><a href="/sell/seller/category/index?categoryId=${category.categoryId}">修改</a></td>
+                                <td><a href="/seller/category/index?categoryId=${category.categoryId}">修改</a></td>
                             </tr>
                         </#list>
                         </tbody>
