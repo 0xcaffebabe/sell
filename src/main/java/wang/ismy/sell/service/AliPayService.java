@@ -3,20 +3,23 @@ package wang.ismy.sell.service;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
-import com.alipay.api.request.AlipayTradePagePayRequest;
-import com.alipay.api.request.AlipayTradePrecreateRequest;
-import com.alipay.api.request.AlipayTradeRefundRequest;
+import com.alipay.api.request.*;
+import com.alipay.api.response.AlipaySystemOauthTokenResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
+import com.alipay.api.response.AlipayUserInfoShareResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import wang.ismy.sell.pojo.dto.AliPayUserInfo;
 import wang.ismy.sell.pojo.dto.OrderDTO;
 import wang.ismy.sell.utils.KeyUtils;
 
 import javax.annotation.PostConstruct;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,7 +55,7 @@ public class AliPayService {
      * @throws AlipayApiException
      * @throws JsonProcessingException
      */
-    public String createPay(BigDecimal price, String title,String orderId) {
+    public String createPay(BigDecimal price, String title, String orderId) {
 
         //创建API对应的request
         AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();
@@ -86,11 +89,11 @@ public class AliPayService {
     public boolean cancel(OrderDTO orderDTO) throws AlipayApiException {
         AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
         request.setBizContent("{" +
-                "\"out_trade_no\":\""+orderDTO.getOrderId()+"\"," +
-                "\"refund_amount\":"+orderDTO.getOrderAmount()+
+                "\"out_trade_no\":\"" + orderDTO.getOrderId() + "\"," +
+                "\"refund_amount\":" + orderDTO.getOrderAmount() +
                 "  }");
         AlipayTradeRefundResponse response = client.execute(request);
-        if(response.isSuccess()){
+        if (response.isSuccess()) {
             return true;
         }
         return false;
@@ -100,7 +103,7 @@ public class AliPayService {
     public boolean validOrder(String tradeNo, String key) {
         String s = orderMap.get(tradeNo);
         if (!StringUtils.isEmpty(s)) {
-            if (s.equals(key)){
+            if (s.equals(key)) {
                 orderMap.remove(tradeNo);
                 return true;
             }
@@ -109,4 +112,37 @@ public class AliPayService {
         return false;
     }
 
+    public String generateLoginUrl() {
+        try {
+            String redirectUrl = URLEncoder.encode("http://r1495937a2.imwork.net/alipay/login/callback", "utf-8");
+            return "https://openauth.alipaydev.com/oauth2/publicAppAuthorize.htm?app_id=" + appId + "&scope=auth_user&redirect_uri=" + redirectUrl + "&state=init";
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+    public String getUserId(String authCode){
+        AlipaySystemOauthTokenRequest request = new AlipaySystemOauthTokenRequest();
+        request.setCode(authCode);
+        request.setGrantType("authorization_code");
+        try {
+            AlipaySystemOauthTokenResponse oauthTokenResponse = client.execute(request);
+            if (oauthTokenResponse.isSuccess()){
+                String accessToken = oauthTokenResponse.getAccessToken();
+                AlipayUserInfoShareRequest userInfoRequest = new AlipayUserInfoShareRequest();
+                AlipayUserInfoShareResponse response = client.execute(userInfoRequest, accessToken);
+                if (response.isSuccess()){
+                    return response.getUserId();
+                }
+            }
+            return null;
+        } catch (AlipayApiException e) {
+            //处理异常
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

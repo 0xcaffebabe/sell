@@ -19,4 +19,5 @@ public class SellApplication {
     public RestTemplate restTemplate(){
         return new RestTemplate();
     }
+
 }

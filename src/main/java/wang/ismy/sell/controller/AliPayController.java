@@ -3,7 +3,9 @@ package wang.ismy.sell.controller;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import wang.ismy.sell.pojo.dto.OrderDTO;
 import wang.ismy.sell.service.AliPayService;
 import wang.ismy.sell.service.OrderService;
@@ -56,6 +58,29 @@ public class AliPayController {
         return "error";
 
     }
+
+    @RequestMapping("login/callback")
+    public ModelAndView loginCallback(@RequestParam("auth_code") String authCode, @RequestParam("app_id") String appId,
+                                      @RequestParam("scope") String scope){
+        log.info("支付宝登录回调 auth:{} id:{} scope:{}",authCode,appId,scope);
+        String userId = aliPayService.getUserId(authCode);
+        ModelAndView mav = new ModelAndView();
+        if (!StringUtils.isEmpty(userId)){
+            log.info("登录成功，userid :{}",userId);
+            mav.setViewName("redirect:/seller/login?openid="+userId);
+        }else {
+            mav.setViewName("common/error");
+            mav.addObject("msg","登录失败");
+            mav.addObject("url","/seller/order/list");
+        }
+        return mav;
+    }
+
+    @RequestMapping("login")
+    public String login(){
+        return "redirect:"+aliPayService.generateLoginUrl();
+    }
+
 
     @RequestMapping("create")
     @ResponseBody
