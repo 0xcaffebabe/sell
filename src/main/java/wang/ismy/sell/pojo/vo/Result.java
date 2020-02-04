@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * 接口统一返回对象
  * @author MY
@@ -12,7 +14,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Result<T> {
+public class Result<T> implements Serializable {
+
+    private static final long serialVersionUID = -6849794470754667711L;
 
     private Integer code;
 

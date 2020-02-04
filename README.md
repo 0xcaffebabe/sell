@@ -82,3 +82,19 @@
 ### 分布式session
 
 ![](./doc/asset/批注%202020-02-04%111035.png)
+
+### 分布式锁
+
+redis
+
+- setnx(set if not exist)
+- getset (get value set key value)
+
+## 缓存
+
+- @Cacheable
+= @CacheEvict
+
+
+
+

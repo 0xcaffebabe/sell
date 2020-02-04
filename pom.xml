@@ -7,8 +7,11 @@
     <groupId>wang.ismy</groupId>
     <artifactId>sell</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <properties>
         <java.version>13</java.version>
+        <maven.compiler.source>13</maven.compiler.source>
+        <maven.compiler.target>13</maven.compiler.target>
     </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>

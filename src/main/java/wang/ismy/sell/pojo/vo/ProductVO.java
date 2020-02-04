@@ -3,6 +3,7 @@ package wang.ismy.sell.pojo.vo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ import java.util.List;
  * @date 2020/2/2 15:10
  */
 @Data
-public class ProductVO {
+public class ProductVO implements Serializable {
 
     @JsonProperty("name")
     private String categoryName;
